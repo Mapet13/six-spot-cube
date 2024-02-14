@@ -1,2 +1,3 @@
-corners_rotation = [1, 1, 1]
-spot_colors = [2, 3, 5, 4, 6, 1]
+corners_rotation = [1, 1, 1];
+spot_colors = [2, 3, 5, 4, 6, 1];
+MAX_MOVES = 20;
