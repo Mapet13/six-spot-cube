@@ -21,18 +21,21 @@ array[CORNER] of ROTATION_STATE: corners_rotation;
 array[COLOR] of COLOR: spot_colors;
 int: MAX_MOVES;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-var int: steps;
-array[0..MAX_MOVES] of var Rotation_move: moves_kind;
-array[0..MAX_MOVES] of var CORNER: moves_corner;
+set of int: MOVES = 0..MAX_MOVES;
+var MOVES: steps;
+array[MOVES] of var Rotation_move: moves_kind;
+array[MOVES] of var CORNER: moves_corner;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+constraint steps <= MAX_MOVES;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-solve satisfy;
+solve minimize steps;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 output 
-["steps         = ", show(steps), ";\n"] ++
-["moves_kind    = ", show(moves_kind), ";\n"] ++
-["moves_corner  = ", show(moves_corner), ";\n"];
+["Steps = ", show(steps), ";\n"] ++
+["Operations:", "\n"] ++ 
+[
+  show(moves_corner[i]) ++ " " ++ show(moves_kind[i]) ++ "\n" | i in 0..MAX_MOVES where fix(i < steps)
+]; 
 
 
 
