@@ -1,0 +1,16 @@
+{
+    "openFiles": [
+        "spot_cube.mzn",
+        "data/example.dzn",
+        "data/solved.dzn"
+    ],
+    "openTab": 2,
+    "projectFiles": [
+        "data/example.dzn",
+        "data/solved.dzn",
+        "spot_cube.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.1",
+    "version": 106
+}
