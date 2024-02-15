@@ -5,6 +5,8 @@
 % 	4.orange
 %  	5.blue
 %  	6.yellow
+include "globals.mzn";
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 int: COLOR_COUNT = 6; 
 set of int: COLOR = 1..COLOR_COUNT;
 
@@ -41,14 +43,17 @@ constraint steps <= MAX_MOVES;
 % solution must be solved:
 constraint forall(i in CORNER)(rotation_states[steps, i] = solved_rotation[i]);
 constraint forall(i in COLOR)(spot_color_states[steps, i] = solved_spot_colors[i]);
+% colors mush be different on every side:
+constraint forall(i in 1..steps)(alldifferent(spot_color_states[i, ..]));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 solve minimize steps;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 output 
-["Steps = ", show(steps), ";\n"] ++
+["Steps   = ", show(steps), ";\n"] ++
+["Initial = ", show(rotation_states[0, ..]) ++ show(spot_color_states[0, ..]), ";\n"] ++ 
 ["Operations:", "\n"] ++ 
 [
-  show(moves_corner[i]) ++ " " ++ show(moves_kind[i]) ++ "\n" | i in 0..MAX_MOVES where fix(i < steps)
+  show(moves_corner[i]) ++ " " ++ show(moves_kind[i]) ++ " -> " ++ show(rotation_states[i + 1, ..]) ++ show(spot_color_states[i + 1, ..]) ++ "\n" | i in 0..MAX_MOVES where fix(i < steps)
 ]; 
 
 
