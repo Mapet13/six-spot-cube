@@ -32,19 +32,36 @@ set of int: STATES = 0..MAX_MOVES+1;
 var MOVES: steps;
 array[MOVES] of var Rotation_move: moves_kind;
 array[MOVES] of var CORNER: moves_corner;
-array[MOVES, CORNER] of var ROTATION_STATE: rotation_states;
-array[MOVES, COLOR] of var COLOR: spot_color_states;
+array[STATES, CORNER] of var ROTATION_STATE: rotation_states;
+array[STATES, COLOR] of var COLOR: spot_color_states;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% bind initial state:
 constraint rotation_states[0, ..] = corners_rotation;
 constraint spot_color_states[0, ..] = spot_colors;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function var int: rotation_offset(var Rotation_move: move) = 
+  if move == Clockwise 
+  then 1 
+  else 2 
+  endif;
+function var int: next_rotation_at_index(var STATES: step, var CORNER: index) = 
+  if moves_corner[step] == index 
+  then (rotation_states[step, index] + rotation_offset(moves_kind[step])) mod ROTATION_MAX
+  else rotation_states[step, index] 
+  endif;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+predicate rotation_should_be_applied(var STATES: step) = 
+  forall(i in CORNER)(next_rotation_at_index(step, i) = rotation_states[step+1, i]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % there need to be a solution:
 constraint steps <= MAX_MOVES;
 % solution must be solved:
 constraint forall(i in CORNER)(rotation_states[steps, i] = solved_rotation[i]);
 constraint forall(i in COLOR)(spot_color_states[steps, i] = solved_spot_colors[i]);
-% colors mush be different on every side:
-constraint forall(i in 1..steps)(alldifferent(spot_color_states[i, ..]));
+% Each side should be coloured differtenly:
+constraint forall(i in 0..steps)(alldifferent(spot_color_states[i, ..]));
+% Rotation move should change cube state:
+constraint forall(i in 0..steps)(rotation_should_be_applied(i));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 solve minimize steps;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
