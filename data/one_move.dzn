@@ -1,3 +1,3 @@
 corners_rotation = [1, 0, 0];
-spot_colors = [6, 2, 3, 4, 1, 5];
+spot_colors = [Yellow, White, Green, Orange, Red, Blue];
 MAX_MOVES = 2;

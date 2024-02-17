@@ -1,34 +1,25 @@
-% colors: // TODO: to enum
-% 	1.red
-% 	2.white
-% 	3.green
-% 	4.orange
-%  	5.blue
-%  	6.yellow
 include "globals.mzn";
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-int: COLOR_COUNT = 6; 
-set of int: COLOR = 1..COLOR_COUNT;
-
+enum COLOR = { Red, White, Green, Orange, Blue, Yellow };
+enum Rotation_move = { Clockwise, CounterClockwise };
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 int: ROTATION_MAX = 2;
 set of int: ROTATION_STATE = 0..ROTATION_MAX;
 
 int: ROTATABLE_CORNERS_COUNT = 3;
 set of int: CORNER = 1..ROTATABLE_CORNERS_COUNT;
-
-enum Rotation_move = { Clockwise, CounterClockwise };
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-array[CORNER, CORNER] of COLOR: rotation_map = [|1,6,5|4,6,3|4,2,5|];
-array[CORNER, CORNER] of COLOR: stationary_rotation_map = [|2,3,4|1,2,5|1,3,6|];
+array[CORNER, CORNER] of COLOR: rotation_map = [|Red,Yellow,Blue|Orange,Yellow,Green|Orange,White,Blue|];
+array[CORNER, CORNER] of COLOR: stationary_rotation_map = [|White,Green,Orange|Red,White,Blue|Red,Green,Yellow|];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% cube configuration:
+% cube configuration declaration:
 array[CORNER] of ROTATION_STATE: corners_rotation;
 array[COLOR] of COLOR: spot_colors;
 int: MAX_MOVES;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % solved:
 array[CORNER] of ROTATION_STATE: solved_rotation = [0, 0, 0];
-array[COLOR] of COLOR: solved_spot_colors = [1, 2, 3, 4, 5, 6];
+array[COLOR] of COLOR: solved_spot_colors = [Red, White, Green, Orange, Blue, Yellow];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 set of int: MOVES = 0..MAX_MOVES;
 set of int: STATES = 0..MAX_MOVES+1;
@@ -75,8 +66,8 @@ predicate rotation_should_be_applied_to_colors(var STATES: step) =
 predicate rotation_should_not_move_rest_of_colors(var STATES: step, var COLOR: i) = 
   spot_color_states[step, i] = spot_color_states[step + 1, i];
   
-predicate rotation_should_rotate_colors(var STATES: step, var COLOR: i, var COLOR: expected_inedx) = 
-  spot_color_states[step + 1, i] = spot_color_states[step, expected_inedx];
+predicate rotation_should_rotate_colors(var STATES: step, var COLOR: i, var COLOR: expected_index) = 
+  spot_color_states[step + 1, i] = spot_color_states[step, expected_index];
   
 predicate rotation_should_be_applied(var STATES: step) = 
   rotation_should_be_applied_to_corners(step) /\ rotation_should_be_applied_to_colors(step);
@@ -86,7 +77,7 @@ constraint steps <= MAX_MOVES;
 % solution must be solved:
 constraint forall(i in CORNER)(rotation_states[steps, i] = solved_rotation[i]);
 constraint forall(i in COLOR)(spot_color_states[steps, i] = solved_spot_colors[i]);
-% Each side should be coloured differtenly:
+% Each side should be coloured differently:
 constraint forall(i in 0..steps)(alldifferent(spot_color_states[i, ..]));
 % Rotation move should change cube state:
 constraint forall(i in 0..(steps-1))(rotation_should_be_applied(i));
