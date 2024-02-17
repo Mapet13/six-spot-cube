@@ -2,12 +2,14 @@
     "openFiles": [
         "spot_cube.mzn",
         "data/example.dzn",
-        "data/solved.dzn"
+        "data/solved.dzn",
+        "data/one_move.dzn"
     ],
-    "openTab": 2,
+    "openTab": 3,
     "projectFiles": [
         "data/example.dzn",
         "data/solved.dzn",
+        "data/one_move.dzn",
         "spot_cube.mzn"
     ],
     "selectedBuiltinConfigId": "org.chuffed.chuffed",
